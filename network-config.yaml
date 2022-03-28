@@ -1,0 +1,19 @@
+services:
+  - tag: "service-A"
+    cpu-limit: 70
+    memory-limit: 70
+  - tag: "service-B"
+    cpu-limit: 50
+    memory-limit: 50
+  - tag: "service-C"
+    cpu-limit: 90
+    memory-limit: 90
+  - tag: "service-D"
+    cpu-limit: 60
+    memory-limit: 60
+
+dependency:
+  - tag: "service-A"
+    requires:
+      - "service-B"
+      - "service-C"
