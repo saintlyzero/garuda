@@ -2,7 +2,9 @@ from fastapi import APIRouter, UploadFile, File, status
 import yaml
 from exceptions import DuplicateServiceName, ServiceNotFound, ConfigFileError
 from api.parse_file import NetworkGraph
-from api.models import Service
+from api.models import Service, ServiceStatus
+from api.schemas import ServiceStatusIn
+from tortoise.exceptions import DoesNotExist
 
 router = APIRouter()
 
@@ -23,3 +25,14 @@ async def upload(file: UploadFile = File(...)):
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
         ) from e
     return {"Filename": file.filename}
+
+
+@router.post("/status")
+async def status(params: ServiceStatusIn):
+    service: Service = await Service.get(id=params.id)
+    await ServiceStatus.create(
+        service=service,
+        cpu_utilization=params.cpu_utilization,
+        memory_utilization=params.memory_utilization,
+    )
+    return params

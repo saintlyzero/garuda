@@ -47,7 +47,6 @@ class ServiceEdge(BaseModel):
 
 
 class ServiceStatus(BaseModel):
-    name = fields.CharField(max_length=200)
     service = fields.ForeignKeyField("garuda.Service")
     cpu_utilization = fields.IntField()
     memory_utilization = fields.IntField()
