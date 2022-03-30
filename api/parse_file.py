@@ -1,8 +1,7 @@
 import logging
-
+import yaml
 from exceptions import DuplicateServiceName, ServiceNotFound
 from typing import Set, Dict, List
-from utils import read_yaml
 
 class Node:
     def __init__(self, name:str, cpu_limit:int=80, memory_limit:int=80) -> None:
@@ -19,16 +18,16 @@ class Node:
     
 
 class NetworkGraph:
-    def __init__(self, filename:str) -> None:
-        self.filename:str = filename
+    def __init__(self, file_content:str) -> None:
+        self.file_content:str = file_content
         self.services:List[Node] = []
         
     def create_graph(self):
-        file_content = read_yaml(self.filename)
-        services = file_content.get("services", [])
-        dependency = file_content.get("dependency", [])
+        parsed_content = {}
+        parsed_content = yaml.safe_load(self.file_content)
+        services = parsed_content.get("services", [])
+        dependency = parsed_content.get("dependency", [])
         self.services = self.build_graph(services, dependency)
-        print(self.services)
 
 
     def build_graph(self, nodes:List[dict], dependencies:List[dict]) -> List[Node]:
@@ -38,8 +37,7 @@ class NetworkGraph:
         for  node in nodes:
             name, cpu_limit, memory_limit = node.values()
             if name in graph:
-                logging.error(f"duplicate service-name: {name}")
-                raise DuplicateServiceName()
+                raise DuplicateServiceName(f"duplicate service-name: {name}")
 
             graph[name] = Node(name, cpu_limit=cpu_limit, memory_limit=memory_limit)
 
@@ -50,21 +48,12 @@ class NetworkGraph:
             depends_on = dependency.get("requires", [])
             node:Node = graph.get(name)
             if not node:
-                logging.error(f"service {name} not found while adding dependency")
-                raise ServiceNotFound()
+                raise ServiceNotFound(f"service {name} not found while adding dependency")
 
             for service_name in depends_on:
                 dependent_node:Node = graph.get(service_name)
                 if not dependent_node:
-                    logging.error(f"service {service_name} not found in nodes while it is present under requires field of {name}")
-                    raise ServiceNotFound()
+                    raise ServiceNotFound(f"service {service_name} not found in nodes while it is present under requires field of {name}")
                 node.dependends.add(dependent_node)
 
         return graph.values()
-
-
-def main():
-    NetworkGraph("network-config.yaml").create_graph()
-
-if __name__ == "__main__":
-    main()

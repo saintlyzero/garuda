@@ -1,4 +1,4 @@
-
+from fastapi import HTTPException
 class DuplicateServiceName(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
@@ -6,3 +6,7 @@ class DuplicateServiceName(Exception):
 class ServiceNotFound(Exception):
      def __init__(self, *args: object) -> None:
         super().__init__(*args)
+
+
+class ConfigFileError(HTTPException):
+    pass
