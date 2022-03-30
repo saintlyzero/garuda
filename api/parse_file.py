@@ -27,7 +27,7 @@ class NetworkGraph:
         parsed_content = yaml.safe_load(self.file_content)
         services = parsed_content.get("services", [])
         dependency = parsed_content.get("dependency", [])
-        self.services = self.build_graph(services, dependency)
+        return self.build_graph(services, dependency)
 
 
     def build_graph(self, nodes:List[dict], dependencies:List[dict]) -> List[Node]:
