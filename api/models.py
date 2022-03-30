@@ -1,4 +1,6 @@
 from tortoise import fields, models
+from api.parse_file import Node
+from typing import List
 
 
 class BaseModel(models.Model):
@@ -11,9 +13,27 @@ class BaseModel(models.Model):
 
 class Service(BaseModel):
     name = fields.CharField(max_length=200)
-    type = fields.CharField(max_length=100)
     cpu_limit = fields.IntField()
     memory_limit = fields.IntField()
+
+    @classmethod
+    async def add_services(cls, graph: List[Node]) -> None:
+        # add services
+        services = {}
+        for node in graph:
+            service = await cls.create(
+                name=node.name, cpu_limit=node.cpu_limit, memory_limit=node.memory_limit
+            )
+            services[node.name] = service
+
+        # add links between services to represent as a graph
+        for node in graph:
+            to_service = services[node.name]
+            for dependent in node.dependends:
+                from_service = services[dependent.name]
+                await ServiceEdge.create(
+                    from_service=from_service, to_service=to_service
+                )
 
 
 class ServiceEdge(BaseModel):

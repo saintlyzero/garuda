@@ -13,7 +13,9 @@ services:
     memory-limit: 60
 
 dependency:
-  - tag: "service-A"
+  - tag: "service-B"
     requires:
-      - "service-B"
-      - "service-C"
+      - "service-A"
+  - tag: "service-C"
+    requires:
+      - "service-A"
