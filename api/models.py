@@ -1,6 +1,8 @@
 from tortoise import fields, models
 from api.parse_file import Node
 from typing import List
+from tortoise import Tortoise
+from tortoise.backends.asyncpg.client import AsyncpgDBClient
 
 
 class BaseModel(models.Model):
@@ -54,3 +56,35 @@ class ServiceStatus(BaseModel):
 
     class Meta:
         table = "service_status"
+
+    @classmethod
+    async def get_all_service_status(cls, db_connection: AsyncpgDBClient):
+
+        query = """
+                WITH srvc_sts as (
+                    SELECT
+                        service_id,
+                        cpu_utilization,
+                        memory_utilization,
+                        created_at,
+                        ROW_NUMBER() OVER(
+                            PARTITION BY service_id
+                            ORDER BY
+                                created_at DESC
+                        ) AS RowNo
+                    FROM
+                        service_status
+                )
+                SELECT
+                    srvc.id,
+                    srvc.name,
+                    srvc_sts.cpu_utilization,
+                    srvc_sts.memory_utilization,
+                    srvc_sts.created_at
+                FROM
+                    service srvc
+                    LEFT JOIN srvc_sts ON srvc.id = srvc_sts.service_id
+                    AND srvc_sts.RowNo = 1;
+                """
+
+        return await db_connection.execute_query_dict(query)

@@ -23,9 +23,52 @@ VALUES
     ('A', 'C');
 
 -- Make adjacency List;
-Select
-    name,
-    to_node
-from
-    node
-    LEFT JOIN edge ON node.name = edge.from_node;
+SELECT
+    srvc.id,
+    srvc.name,
+    srvc_sts.cpu_utilization,
+    srvc_sts.memory_utilization,
+    srvc_sts.created_at
+FROM
+    service AS srvc
+    LEFT JOIN (
+        SELECT
+            service_id,
+            cpu_utilization,
+            memory_utilization,
+            created_at,
+            ROW_NUMBER() OVER(
+                PARTITION BY service_id
+                ORDER BY
+                    created_at DESC
+            ) AS RowNo
+        FROM
+            service_status
+    ) AS srvc_sts ON srvc.id = srvc_sts.service_id
+    AND srvc_sts.RowNo = 1;
+
+-- 
+WITH srvc_sts as (
+    SELECT
+        service_id,
+        cpu_utilization,
+        memory_utilization,
+        created_at,
+        ROW_NUMBER() OVER(
+            PARTITION BY service_id
+            ORDER BY
+                created_at DESC
+        ) AS RowNo
+    FROM
+        service_status
+)
+SELECT
+    srvc.id,
+    srvc.name,
+    srvc_sts.cpu_utilization,
+    srvc_sts.memory_utilization,
+    srvc_sts.created_at
+FROM
+    service srvc
+    LEFT JOIN srvc_sts ON srvc.id = srvc_sts.service_id
+    AND srvc_sts.RowNo = 1;

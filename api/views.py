@@ -3,8 +3,9 @@ import yaml
 from exceptions import DuplicateServiceName, ServiceNotFound, ConfigFileError
 from api.parse_file import NetworkGraph
 from api.models import Service, ServiceStatus
-from api.schemas import ServiceStatusIn
-from tortoise.exceptions import DoesNotExist
+from api.schemas import ServiceStatusIn, ServicesOut, ServiceStatusOut
+from tortoise import Tortoise
+from typing import List
 
 router = APIRouter()
 
@@ -36,3 +37,15 @@ async def status(params: ServiceStatusIn):
         memory_utilization=params.memory_utilization,
     )
     return params
+
+
+@router.get("/status", response_model=List[ServiceStatusOut])
+async def get_status():
+    DB_CONNECTION = Tortoise.get_connection("read_write")
+
+    return await ServiceStatus.get_all_service_status(DB_CONNECTION)
+
+
+@router.get("/service", response_model=ServicesOut)
+async def get_service():
+    return await ServicesOut.from_queryset(Service.all())
