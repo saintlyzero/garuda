@@ -7,8 +7,8 @@ from datetime import datetime
 
 class ServiceStatusIn(BaseModel):
     id: int
-    cpu_utilization: int
-    memory_utilization: int
+    cpu_utilization: float
+    memory_utilization: float
 
 
 class ServiceStatusOut(BaseModel):
@@ -22,7 +22,7 @@ class ServiceStatusOut(BaseModel):
 ServicesOut = pydantic_queryset_creator(Service)
 
 
-class GraphServiceOut(BaseModel):
+class GraphService(BaseModel):
     id: int
     name: str
     cpu_limit: int
@@ -31,3 +31,13 @@ class GraphServiceOut(BaseModel):
     memory_utilization: Optional[int] = None
     edges: List[int] = []
     is_healthy: Optional[int] = None
+
+
+class GraphEdge(BaseModel):
+    source: str
+    target: str
+
+
+class SankyGraphOut(BaseModel):
+    nodes: List[GraphService]
+    edges: List[GraphEdge]

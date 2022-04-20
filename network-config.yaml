@@ -1,21 +1,101 @@
 services:
-  - tag: "service-A"
+  - tag: "service-a"
     cpu-limit: 70
-    memory-limit: 70
-  - tag: "service-B"
+    memory-limit: 30
+  - tag: "service-b"
     cpu-limit: 50
     memory-limit: 50
-  - tag: "service-C"
+  - tag: "service-c"
     cpu-limit: 90
     memory-limit: 90
-  - tag: "service-D"
+  - tag: "service-d"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-e"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-f"
+    cpu-limit: 60
+    memory-limit: 20
+  - tag: "service-g"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-h"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-i"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-j"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-k"
+    cpu-limit: 60
+    memory-limit: 60
+
+  - tag: "service-l"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-m"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-n"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-o"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-p"
+    cpu-limit: 60
+    memory-limit: 60
+  - tag: "service-q"
     cpu-limit: 60
     memory-limit: 60
 
 dependency:
-  - tag: "service-B"
+  - tag: "service-b"
     requires:
-      - "service-A"
-  - tag: "service-C"
+      - "service-a"
+  - tag: "service-c"
     requires:
-      - "service-A"
+      - "service-a"
+  - tag: "service-d"
+    requires:
+      - "service-b"
+  - tag: "service-f"
+    requires:
+      - "service-c"
+  - tag: "service-e"
+    requires:
+      - "service-d"
+  - tag: "service-g"
+    requires:
+      - "service-f"
+  - tag: "service-h"
+    requires:
+      - "service-f"
+  - tag: "service-i"
+    requires:
+      - "service-f"
+  - tag: "service-j"
+    requires:
+      - "service-f"
+  - tag: "service-k"
+    requires:
+      - "service-c"
+  - tag: "service-m"
+    requires:
+      - "service-l"
+  - tag: "service-n"
+    requires:
+      - "service-l"
+  - tag: "service-o"
+    requires:
+      - "service-m"
+      - "service-n"
+  - tag: "service-p"
+    requires:
+      - "service-o"
+  - tag: "service-q"
+    requires:
+      - "service-p"

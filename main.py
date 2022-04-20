@@ -2,9 +2,18 @@ from fastapi import FastAPI
 from api.views import router as api_router
 from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Garuda")
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 TORTOISE_CONFIG = {
     "connections": {
