@@ -13,6 +13,7 @@ from api.schemas import (
 )
 from tortoise import Tortoise
 from typing import List
+from collections import deque
 
 router = APIRouter()
 
@@ -152,7 +153,7 @@ async def get_dependency_sanky_graph():
         node.memory_utilization = service["memory_utilization"]
 
         # services with status not available
-        if node.cpu_utilization is None:
+        if node.cpu_utilization is None and node.memory_utilization is None:
             continue
 
         # healthy = 1 | unhealthy = 0
@@ -166,9 +167,25 @@ async def get_dependency_sanky_graph():
             unhealthy_services.append(service["id"])
 
     # update status of services dependent on unhealthy services
+    visited = set()
+
     for id in unhealthy_services:
+        if id in visited:
+            continue
+
+        # perform a simple bfs
+        # to mark all dependent unhealthy nodes
+        queue = deque([])
+        queue.append(id)
         node = graph[id]
-        for dependent_node_id in node.edges:
-            graph[dependent_node_id].is_healthy = 0
+
+        while queue:
+            node_id = queue.popleft()
+            node = graph[node_id]
+            node.is_healthy = 0
+            visited.add(node_id)
+            for edge in node.edges:
+                if edge not in visited:
+                    queue.append(edge)
 
     return SankyGraphOut(nodes=list(graph.values()), edges=sanky_graph_edges)
