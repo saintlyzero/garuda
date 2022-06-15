@@ -14,8 +14,8 @@ class ServiceStatusIn(BaseModel):
 class ServiceStatusOut(BaseModel):
     id: int
     name: str
-    cpu_utilization: Optional[int] = None
-    memory_utilization: Optional[int] = None
+    cpu_utilization: Optional[float] = None
+    memory_utilization: Optional[float] = None
     created_at: Optional[datetime] = None
 
 
@@ -25,10 +25,10 @@ ServicesOut = pydantic_queryset_creator(Service)
 class GraphService(BaseModel):
     id: int
     name: str
-    cpu_limit: int
-    memory_limit: int
-    cpu_utilization: Optional[int] = None
-    memory_utilization: Optional[int] = None
+    cpu_limit: float
+    memory_limit: float
+    cpu_utilization: Optional[float] = None
+    memory_utilization: Optional[float] = None
     edges: List[int] = []
     is_healthy: Optional[int] = None
 

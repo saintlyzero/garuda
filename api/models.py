@@ -15,8 +15,8 @@ class BaseModel(models.Model):
 
 class Service(BaseModel):
     name = fields.CharField(max_length=200)
-    cpu_limit = fields.IntField()
-    memory_limit = fields.IntField()
+    cpu_limit = fields.FloatField()
+    memory_limit = fields.FloatField()
 
     @classmethod
     async def add_services(cls, graph: List[Node]) -> None:
@@ -50,8 +50,8 @@ class ServiceEdge(BaseModel):
 
 class ServiceStatus(BaseModel):
     service = fields.ForeignKeyField("garuda.Service")
-    cpu_utilization = fields.IntField()
-    memory_utilization = fields.IntField()
+    cpu_utilization = fields.FloatField()
+    memory_utilization = fields.FloatField()
     created_at = fields.DatetimeField(null=False, auto_now_add=True)
 
     class Meta:

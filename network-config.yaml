@@ -7,7 +7,7 @@ services:
     memory-limit: 50
   - tag: "service-c"
     cpu-limit: 90
-    memory-limit: 90
+    memory-limit: 10
   - tag: "service-d"
     cpu-limit: 60
     memory-limit: 60
@@ -32,7 +32,6 @@ services:
   - tag: "service-k"
     cpu-limit: 60
     memory-limit: 60
-
   - tag: "service-l"
     cpu-limit: 60
     memory-limit: 60
